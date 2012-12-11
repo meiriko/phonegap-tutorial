@@ -8,7 +8,7 @@ var app = {
             $('.employee-list').empty();
             for (var i=0; i<l; i++) {
                 e = employees[i];
-                $('.employee-list').append('<li>x<a href="#employees/' + e.id + '">' + e.firstName + ' ' + e.lastName + '</a></li>');
+                $('.employee-list').append('<li><a href="#employees/' + e.id + '">' + e.firstName + ' ' + e.lastName + '</a> (' + e.title + ') </li>');
             }
         });
     },
