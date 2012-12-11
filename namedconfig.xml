@@ -1,26 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns       = "http://www.w3.org/ns/widgets"
-        xmlns:gap   = "http://phonegap.com/ns/1.0"
-        id          = "org.coenraets.employeedirectory"
-        versionCode = "10"
-        version     = "1.1.0">
- 
-    <name>Employee Directory</name>
- 
-    <description>
-        A simple employee directory application
-    </description>
- 
-    <author href="http://coenraets.org" email="ccoenraets@gmail.com">
-        Christophe Coenraets
-    </author>
- 
-    <feature name="http://api.phonegap.com/1.0/camera"/>
-    <feature name="http://api.phonegap.com/1.0/contacts"/>
-    <feature name="http://api.phonegap.com/1.0/file"/>
-    <feature name="http://api.phonegap.com/1.0/geolocation"/>
-    <feature name="http://api.phonegap.com/1.0/media"/>
-    <feature name="http://api.phonegap.com/1.0/network"/>
-    <feature name="http://api.phonegap.com/1.0/notification"/>
- 
+ï»¿<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlnsÂ Â Â Â Â Â  = "http://www.w3.org/ns/widgets"
+Â Â Â Â Â Â Â Â xmlns:gapÂ Â  = "http://phonegap.com/ns/1.0"
+Â Â Â Â Â Â Â Â idÂ Â Â Â Â Â Â Â Â  = "com.promofy.employeedirectory"
+Â Â Â Â Â Â Â Â versionCode = "10"
+Â Â Â Â Â Â Â Â versionÂ Â Â Â  = "1.1.2">
+Â 
+Â Â Â Â <name>Employee Directory</name>
+Â 
+Â Â Â Â <description>
+Â Â Â Â Â Â Â Â A simple employee directory application
+Â Â Â Â </description>
+Â 
+Â Â Â Â <author href="http://promofy.com" email="meir.shahar@gmail.com">
+Â Â Â Â Â Â Â Â Meir Shahar
+Â Â Â Â </author>
+Â 
+Â Â Â Â <feature name="http://api.phonegap.com/1.0/camera"/>
+Â Â Â Â <feature name="http://api.phonegap.com/1.0/contacts"/>
+Â Â Â Â <feature name="http://api.phonegap.com/1.0/file"/>
+Â Â Â Â <feature name="http://api.phonegap.com/1.0/geolocation"/>
+Â Â Â Â <feature name="http://api.phonegap.com/1.0/media"/>
+Â Â Â Â <feature name="http://api.phonegap.com/1.0/network"/>
+Â Â Â Â <feature name="http://api.phonegap.com/1.0/notification"/>
+Â 
 </widget>
