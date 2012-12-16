@@ -50,6 +50,7 @@
                             'Acceleration Y: ' + acceleration.y + '<br />' +
                             'Acceleration Z: ' + acceleration.z + '<br />' +
                             'Timestamp: '      + acceleration.timestamp + '<br />';
+		drawCircle( acceleration.x * 10 ) ;
     }
 
     // onError: Failed to get the acceleration
@@ -58,18 +59,12 @@
         alert('onError!');
     }
 
-    </script>
-  </head>
-  <body>
-    <div id="accelerometer">Waiting for accelerometer...1</div>
-	
-    <canvas id="myCanvas" width="578" height="200"></canvas>
-    <script>
+	function drawCircle( radius ) {
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
       var centerX = canvas.width / 2;
       var centerY = canvas.height / 2;
-      var radius = 70;
+    //  var radius = 70;
 
       context.beginPath();
       context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
@@ -78,6 +73,12 @@
       context.lineWidth = 5;
       context.strokeStyle = '#003300';
       context.stroke();
-    </script>	
+	}
+    </script>
+  </head>
+  <body>
+    <div id="accelerometer">Waiting for accelerometer...1</div>
+	
+    <canvas id="myCanvas" width="300" height="300"></canvas>
   </body>
 </html>
