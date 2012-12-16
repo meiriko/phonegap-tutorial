@@ -69,7 +69,11 @@
 
       context.beginPath();
       context.arc(centerX, centerY, Math.abs( radius ), 0, 2 * Math.PI, false);
-      context.fillStyle = ( radius > 0 ? 'green' : 'red' ) ;
+	  if( radius > 0 ) {
+		context.fillStyle = 'green' ;
+	  } else {
+		context.fillStyle = 'red' ;
+	  }
       context.fill();
       context.lineWidth = 5;
 	  var strokeStyle = '#003300' ;
