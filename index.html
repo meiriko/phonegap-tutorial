@@ -18,7 +18,7 @@
     //
     function onDeviceReady() {
 		var element = document.getElementById('accelerometer');
-        element.innerHTML = 'device ready' ;
+        element.innerHTML = '' ;
         startWatch();
     }
 
@@ -26,9 +26,9 @@
     //
     function startWatch() {
 		var element = document.getElementById('accelerometer');
-        element.innerHTML = "start watch..." ;
+        element.innerHTML = "" ;
         // Update acceleration every 3 seconds
-        var options = { frequency: 500 };
+        var options = { frequency: 100 };
 
         watchID = navigator.accelerometer.watchAcceleration(onSuccess, onError, options);
     }
@@ -45,12 +45,14 @@
     // onSuccess: Get a snapshot of the current acceleration
     //
     function onSuccess(acceleration) {
+/*
         var element = document.getElementById('accelerometer');
         element.innerHTML = 'Acceleration X: ' + acceleration.x + '<br />' +
                             'Acceleration Y: ' + acceleration.y + '<br />' +
                             'Acceleration Z: ' + acceleration.z + '<br />' +
                             'Timestamp: '      + acceleration.timestamp + '<br />';
-		drawCircle( acceleration.x * 10 ) ;
+*/
+		drawAccelerationCircle( acceleration ) ;
     }
 
     // onError: Failed to get the acceleration
@@ -59,17 +61,17 @@
         alert('onError!');
     }
 
-	function drawCircle( radius , fillStyle ) {
+	function drawAccelerationCircle( acceleration ) {
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
 	  context.clearRect(0,0,canvas.width,canvas.height);
-      var centerX = canvas.width / 2;
-      var centerY = canvas.height / 2;
-    //  var radius = 70;
+      var centerX = Math.abs( acceleration.x * canvas.width / 10 ) ;//	  canvas.width / 2;
+      var centerY = Math.abs( acceleration.y * canvas.height / 10 ) ; // var centerY = canvas.height / 2;
+	  var radius = 70;
 
       context.beginPath();
       context.arc(centerX, centerY, Math.abs( radius ), 0, 2 * Math.PI, false);
-	  if( radius > 0 ) {
+	  if( (acceleration.x * acceleration.y) > 0 ) {
 		context.fillStyle = 'green' ;
 	  } else {
 		context.fillStyle = 'red' ;
@@ -83,8 +85,8 @@
     </script>
   </head>
   <body>
-    <div id="accelerometer">Waiting for accelerometer...1</div>
+    <div id="accelerometer">.</div>
 	
-    <canvas id="myCanvas" width="100" height="300"></canvas>
+    <canvas id="myCanvas" width="300" height="300"></canvas>
   </body>
 </html>
