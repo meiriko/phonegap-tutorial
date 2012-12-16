@@ -66,6 +66,7 @@
 	function drawCircle( radius ) {
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
+	  context.clearRect(0,0,canvas.width,canvas.height);
       var centerX = canvas.width / 2;
       var centerY = canvas.height / 2;
     //  var radius = 70;
@@ -83,6 +84,6 @@
   <body>
     <div id="accelerometer">Waiting for accelerometer...1</div>
 	
-    <canvas id="myCanvas" width="300" height="300"></canvas>
+    <canvas id="myCanvas" width="100" height="300"></canvas>
   </body>
 </html>
