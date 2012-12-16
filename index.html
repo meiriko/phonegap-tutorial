@@ -50,9 +50,9 @@
                             'Acceleration Y: ' + acceleration.y + '<br />' +
                             'Acceleration Z: ' + acceleration.z + '<br />' +
                             'Timestamp: '      + acceleration.timestamp + '<br />';
-		var strokeStyle = '#003300' ;
+		var fillStyle = 'green' ;
 		if( acceleration.x < 0 ) {
-			strokeStyle = '#330000'
+			fillStyle = 'red'
 		}
 		drawCircle( Math.abs( acceleration.x ) * 10 , strokeStyle ) ;
     }
@@ -63,7 +63,7 @@
         alert('onError!');
     }
 
-	function drawCircle( radius ) {
+	function drawCircle( radius , fillStyle ) {
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
 	  context.clearRect(0,0,canvas.width,canvas.height);
@@ -73,9 +73,10 @@
 
       context.beginPath();
       context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-      context.fillStyle = 'green';
+      context.fillStyle = fillStyle ;//'green';
       context.fill();
       context.lineWidth = 5;
+	  var strokeStyle = '#003300' ;
       context.strokeStyle = strokeStyle ;
       context.stroke();
 	}
