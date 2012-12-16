@@ -50,7 +50,11 @@
                             'Acceleration Y: ' + acceleration.y + '<br />' +
                             'Acceleration Z: ' + acceleration.z + '<br />' +
                             'Timestamp: '      + acceleration.timestamp + '<br />';
-		drawCircle( acceleration.x * 10 ) ;
+		var strokeStyle = '#003300' ;
+		if( acceleration.x < 0 ) {
+			strokeStyle = '#330000'
+		}
+		drawCircle( Math.abs( acceleration.x ) * 10 , strokeStyle ) ;
     }
 
     // onError: Failed to get the acceleration
@@ -71,7 +75,7 @@
       context.fillStyle = 'green';
       context.fill();
       context.lineWidth = 5;
-      context.strokeStyle = '#003300';
+      context.strokeStyle = strokeStyle ;
       context.stroke();
 	}
     </script>
