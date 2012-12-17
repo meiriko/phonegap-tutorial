@@ -19,6 +19,9 @@
     function onDeviceReady() {
 		var element = document.getElementById('accelerometer');
         element.innerHTML = '' ;
+        var canvas = document.getElementById('myCanvas');
+		canvas.width = window.innerWidth ;
+		canvas.height = window.innerHeight ;
         startWatch();
     }
 
@@ -85,7 +88,7 @@
     </script>
   </head>
   <body>
-    <div id="accelerometer">.</div>
+    <div id="accelerometer">loading accelerometer</div>
 	
     <canvas id="myCanvas" width="300" height="300"></canvas>
   </body>
