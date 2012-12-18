@@ -1,28 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>three.js canvas - geometry hierarchy 2</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<style>
-			body {
-				background:#fff;
-				padding:0;
-				margin:0;
-				font-weight: bold;
-				overflow:hidden;
-			}
-		</style>
-	</head>
-	<body>
+<html>
 
-		<script src="lib/three.min.js"></script>
+  <head>
+    <title>Acceleration Example</title>
 
-		<!-- <script src="lib/stats.min.js"></script> -->
+	<script src="phonegap.js"></script>
+	<script src="lib/three.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
 
-		<script>
+    // The watch id references the current `watchAcceleration`
+    var watchID = null;
 
-			var container ; // , stats;
+	var centerX = 0 ;
+	var centerY = 0 ;
+
+			var container ;
 
 			var camera, scene, renderer;
 
@@ -33,10 +25,97 @@
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
 
-			document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+			// document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 			init();
 			animate();
+	
+    // Wait for PhoneGap to load
+    //
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // PhoneGap is ready
+    //
+    function onDeviceReady() {
+		var element = document.getElementById('accelerometer');
+        element.innerHTML = '' ;
+        var canvas = document.getElementById('myCanvas');
+		canvas.width = window.innerWidth ;
+		canvas.height = window.innerHeight ;
+        startWatch();
+    }
+
+    // Start watching the acceleration
+    //
+    function startWatch() {
+		var element = document.getElementById('accelerometer');
+        element.innerHTML = "" ;
+        // Update acceleration every 3 seconds
+        var options = { frequency: 10 };
+
+        watchID = navigator.accelerometer.watchAcceleration(onSuccess, onError, options);
+    }
+
+    // Stop watching the acceleration
+    //
+    function stopWatch() {
+        if (watchID) {
+            navigator.accelerometer.clearWatch(watchID);
+            watchID = null;
+        }
+    }
+
+    // onSuccess: Get a snapshot of the current acceleration
+    //
+    function onSuccess(acceleration) {
+/*
+        var element = document.getElementById('accelerometer');
+        element.innerHTML = 'Acceleration X: ' + acceleration.x + '<br />' +
+                            'Acceleration Y: ' + acceleration.y + '<br />' +
+                            'Acceleration Z: ' + acceleration.z + '<br />' +
+                            'Timestamp: '      + acceleration.timestamp + '<br />';
+*/
+//		drawAccelerationCircle( acceleration ) ;
+		  var canvas = document.getElementById('myCanvas');
+		  var newCenterX = canvas.width / 2 - acceleration.x * canvas.width / 5 ; // canvas.width - Math.abs( acceleration.x * canvas.width / 10 ) ;//	  canvas.width / 2;
+		  var newCenterY = canvas.height / 2 + acceleration.y * canvas.height / 5 ; // var centerY = canvas.height / 2;
+		  centerX = Math.max( Math.min( canvas.width , 0.9 * centerX + 0.1 * newCenterX ) , 0 ) ;
+		  centerY = Math.max( Math.min( 0.9 * centerY + 0.1 * newCenterY , canvas.height ) , 0 ) ;
+		drawThreeAcceleration() ;
+    }
+
+    // onError: Failed to get the acceleration
+    //
+    function onError() {
+        alert('onError!');
+    }
+
+	function drawAccelerationCircle( acceleration ) {
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+	  context.clearRect(0,0,canvas.width,canvas.height);
+      var newCenterX = canvas.width / 2 - acceleration.x * canvas.width / 5 ; // canvas.width - Math.abs( acceleration.x * canvas.width / 10 ) ;//	  canvas.width / 2;
+      var newCenterY = canvas.height / 2 + acceleration.y * canvas.height / 5 ; // var centerY = canvas.height / 2;
+	  centerX = Math.max( Math.min( canvas.width , 0.9 * centerX + 0.1 * newCenterX ) , 0 ) ;
+	  centerY = Math.max( Math.min( 0.9 * centerY + 0.1 * newCenterY , canvas.height ) , 0 ) ;
+	  var radius = 70;
+
+      context.beginPath();
+      context.arc(centerX, centerY, Math.abs( radius ), 0, 2 * Math.PI, false);
+	  if( (acceleration.x * acceleration.y) > 0 ) {
+		context.fillStyle = 'green' ;
+	  } else {
+		context.fillStyle = 'red' ;
+	  }
+      context.fill();
+      context.lineWidth = 5;
+	  var strokeStyle = '#003300' ;
+      context.strokeStyle = strokeStyle ;
+      context.stroke();
+	}
+	
+// Three demo
+
 
 			function init() {
 
@@ -74,13 +153,6 @@
 				renderer.sortObjects = false;
 				container.appendChild( renderer.domElement );
 
-				/*
-				stats = new Stats();
-				stats.domElement.style.position = 'absolute';
-				stats.domElement.style.top = '0px';
-				stats.domElement.style.zIndex = 100;
-				container.appendChild( stats.domElement );
-				*/
 				//
 
 				window.addEventListener( 'resize', onWindowResize, false );
@@ -99,12 +171,14 @@
 
 			}
 
+			/*
 			function onDocumentMouseMove(event) {
 
 				mouseX = ( event.clientX - windowHalfX ) * 10;
 				mouseY = ( event.clientY - windowHalfY ) * 10;
 
 			}
+			*/
 
 			//
 
@@ -113,7 +187,6 @@
 				requestAnimationFrame( animate );
 
 				render();
-				// stats.update();
 
 			}
 
@@ -132,6 +205,11 @@
 			}
 
 		</script>
-
-	</body>
+	
+  </head>
+  <body>
+    <div id="accelerometer">loading accelerometer</div>
+	
+    <canvas id="myCanvas" width="300" height="300"></canvas>
+  </body>
 </html>
