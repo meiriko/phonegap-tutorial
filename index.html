@@ -81,7 +81,9 @@
 		  var newCenterY = canvas.height / 2 + acceleration.y * canvas.height / 5 ; // var centerY = canvas.height / 2;
 		  centerX = Math.max( Math.min( canvas.width , 0.9 * centerX + 0.1 * newCenterX ) , 0 ) ;
 		  centerY = Math.max( Math.min( 0.9 * centerY + 0.1 * newCenterY , canvas.height ) , 0 ) ;
-		drawThreeAcceleration() ;
+		  mouseX = centerX ;
+		  mouseY = centerY ;
+		// drawThreeAcceleration() ;
     }
 
     // onError: Failed to get the acceleration
