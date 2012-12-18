@@ -6,6 +6,9 @@
 
 	<script src="phonegap.js"></script>
 	<script src="lib/three.min.js"></script>
+  </head>
+  <body>
+	
     <script type="text/javascript" charset="utf-8">
 
     // The watch id references the current `watchAcceleration`
@@ -164,11 +167,6 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 
-				stats = new Stats();
-				stats.domElement.style.position = 'absolute';
-				stats.domElement.style.top = '0px';
-				container.appendChild( stats.domElement );
-
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
@@ -264,8 +262,6 @@
 
 			</script>
 	
-  </head>
-  <body>
     <div id="accelerometer">loading accelerometer</div>
 	
     <canvas id="myCanvas" width="300" height="300"></canvas>
