@@ -1,31 +1,269 @@
+<!DOCTYPE html>
 <html>
-<body>
 
-<head>
-	<script src="css/source-sans-pro.js"></script>
-	<link href="css/styles.css" rel="stylesheet">
-</head>
+  <head>
+    <title>Acceleration Example</title>
 
-<script id="home-tpl" type="text/x-handlebars-template">
-	<div class='header'><h1>Home 4</h1></div>
-	<div class='search-bar'><input class='search-key' type="search"/></div>
-	<div class="scroll"><ul class='employee-list'></ul></div>
-</script>
+	<script src="phonegap.js"></script>
+	<script src="lib/three.min.js"></script>
+  </head>
+  <body>
+	
+    <script type="text/javascript" charset="utf-8">
 
-<script id="employee-li-tpl" type="text/x-handlebars-template">
-	{{#.}}
-	<li><a href="#employees/{{this.id}}">{{this.firstName}} {{this.lastName}}<br/>{{this.title}}</a></li>
-	{{/.}}
-</script>
+    // The watch id references the current `watchAcceleration`
+    var watchID = null;
+
+	var centerX = 0 ;
+	var centerY = 0 ;
+
+	var SEPARATION = 100, AMOUNTX = 50, AMOUNTY = 50;
+
+	var container ;
+	var camera, scene, renderer;
+
+	var particles, particle, count = 0;
+
+	var mouseX = 0, mouseY = 0;
+
+	var windowHalfX = window.innerWidth / 2;
+	var windowHalfY = window.innerHeight / 2;
+
+	init();
+	animate();
+	
+    // Wait for PhoneGap to load
+    //
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // PhoneGap is ready
+    //
+    function onDeviceReady() {
+		var element = document.getElementById('accelerometer');
+        element.innerHTML = '' ;
+        var canvas = document.getElementById('myCanvas');
+		canvas.width = window.innerWidth ;
+		canvas.height = window.innerHeight ;
+        startWatch();
+    }
+
+    // Start watching the acceleration
+    //
+    function startWatch() {
+		var element = document.getElementById('accelerometer');
+        element.innerHTML = "" ;
+        // Update acceleration every 3 seconds
+        var options = { frequency: 10 };
+
+        watchID = navigator.accelerometer.watchAcceleration(onSuccess, onError, options);
+    }
+
+    // Stop watching the acceleration
+    //
+    function stopWatch() {
+        if (watchID) {
+            navigator.accelerometer.clearWatch(watchID);
+            watchID = null;
+        }
+    }
+
+    // onSuccess: Get a snapshot of the current acceleration
+    //
+    function onSuccess(acceleration) {
+/*
+        var element = document.getElementById('accelerometer');
+        element.innerHTML = 'Acceleration X: ' + acceleration.x + '<br />' +
+                            'Acceleration Y: ' + acceleration.y + '<br />' +
+                            'Acceleration Z: ' + acceleration.z + '<br />' +
+                            'Timestamp: '      + acceleration.timestamp + '<br />';
+*/
+//		drawAccelerationCircle( acceleration ) ;
+		  var canvas = document.getElementById('myCanvas');
+		  var newCenterX = canvas.width / 2 - acceleration.x * canvas.width / 5 ; // canvas.width - Math.abs( acceleration.x * canvas.width / 10 ) ;//	  canvas.width / 2;
+		  var newCenterY = canvas.height / 2 + acceleration.y * canvas.height / 5 ; // var centerY = canvas.height / 2;
+		  centerX = Math.max( Math.min( canvas.width , 0.9 * centerX + 0.1 * newCenterX ) , 0 ) ;
+		  centerY = Math.max( Math.min( 0.9 * centerY + 0.1 * newCenterY , canvas.height ) , 0 ) ;
+		  mouseX = centerX ;
+		  mouseY = centerY ;
+		// drawThreeAcceleration() ;
+    }
+
+    // onError: Failed to get the acceleration
+    //
+    function onError() {
+        alert('onError!');
+    }
+
+	function drawAccelerationCircle( acceleration ) {
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+	  context.clearRect(0,0,canvas.width,canvas.height);
+      var newCenterX = canvas.width / 2 - acceleration.x * canvas.width / 5 ; // canvas.width - Math.abs( acceleration.x * canvas.width / 10 ) ;//	  canvas.width / 2;
+      var newCenterY = canvas.height / 2 + acceleration.y * canvas.height / 5 ; // var centerY = canvas.height / 2;
+	  centerX = Math.max( Math.min( canvas.width , 0.9 * centerX + 0.1 * newCenterX ) , 0 ) ;
+	  centerY = Math.max( Math.min( 0.9 * centerY + 0.1 * newCenterY , canvas.height ) , 0 ) ;
+	  var radius = 70;
+
+      context.beginPath();
+      context.arc(centerX, centerY, Math.abs( radius ), 0, 2 * Math.PI, false);
+	  if( (acceleration.x * acceleration.y) > 0 ) {
+		context.fillStyle = 'green' ;
+	  } else {
+		context.fillStyle = 'red' ;
+	  }
+      context.fill();
+      context.lineWidth = 5;
+	  var strokeStyle = '#003300' ;
+      context.strokeStyle = strokeStyle ;
+      context.stroke();
+	}
+	
+// Three demo
 
 
-<script src="phonegap.js"></script>
-<script src="lib/handlebars.js"></script>
-<script src="lib/jquery-1.8.2.min.js"></script>
-<script src="js/storage/memory-store.js"></script>
-<script src="js/HomeView.js"></script>
-<script src="js/main.js"></script>
-<script src="lib/iscroll.js"></script>
 
-</body>
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 1000;
+
+				scene = new THREE.Scene();
+
+				particles = new Array();
+
+				var PI2 = Math.PI * 2;
+				var material = new THREE.ParticleCanvasMaterial( {
+
+					color: 0xffffff,
+					program: function ( context ) {
+
+						context.beginPath();
+						context.arc( 0, 0, 1, 0, PI2, true );
+						context.fill();
+
+					}
+
+				} );
+
+				var i = 0;
+
+				for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
+
+					for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
+
+						particle = particles[ i ++ ] = new THREE.Particle( material );
+						particle.position.x = ix * SEPARATION - ( ( AMOUNTX * SEPARATION ) / 2 );
+						particle.position.z = iy * SEPARATION - ( ( AMOUNTY * SEPARATION ) / 2 );
+						scene.add( particle );
+
+					}
+
+				}
+
+				renderer = new THREE.CanvasRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			//
+
+			function onDocumentMouseMove( event ) {
+
+				// mouseX = event.clientX - windowHalfX;
+				// mouseY = event.clientY - windowHalfY;
+
+			}
+
+			function onDocumentTouchStart( event ) {
+
+				if ( event.touches.length === 1 ) {
+
+					event.preventDefault();
+
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+				}
+
+			}
+
+			function onDocumentTouchMove( event ) {
+
+				if ( event.touches.length === 1 ) {
+
+					event.preventDefault();
+
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+				}
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+
+			}
+
+			function render() {
+
+				camera.position.x += ( mouseX - camera.position.x ) * .05;
+				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+				camera.lookAt( scene.position );
+
+				var i = 0;
+
+				for ( var ix = 0; ix < AMOUNTX; ix ++ ) {
+
+					for ( var iy = 0; iy < AMOUNTY; iy ++ ) {
+
+						particle = particles[ i++ ];
+						particle.position.y = ( Math.sin( ( ix + count ) * 0.3 ) * 50 ) + ( Math.sin( ( iy + count ) * 0.5 ) * 50 );
+						particle.scale.x = particle.scale.y = ( Math.sin( ( ix + count ) * 0.3 ) + 1 ) * 2 + ( Math.sin( ( iy + count ) * 0.5 ) + 1 ) * 2;
+
+					}
+
+				}
+
+				renderer.render( scene, camera );
+
+				count += 0.1;
+
+			}
+
+			</script>
+	
+    <div id="accelerometer">loading accelerometer</div>
+	
+    <canvas id="myCanvas" width="300" height="300"></canvas>
+  </body>
 </html>
