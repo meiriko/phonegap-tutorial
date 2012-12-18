@@ -1,100 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+	<head>
+		<title>three.js canvas - geometry hierarchy 2</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				background:#fff;
+				padding:0;
+				margin:0;
+				font-weight: bold;
+				overflow:hidden;
+			}
+		</style>
+	</head>
+	<body>
 
-  <head>
-    <title>Acceleration Example</title>
+		<script src="lib/three.min.js"></script>
 
-	<script src="phonegap.js"></script>
-    <script type="text/javascript" charset="utf-8">
+		<!-- <script src="lib/stats.min.js"></script> -->
 
-    // The watch id references the current `watchAcceleration`
-    var watchID = null;
+		<script>
 
-	var centerX = 0 ;
-	var centerY = 0 ;
+			var container ; // , stats;
 
-    // Wait for PhoneGap to load
-    //
-    document.addEventListener("deviceready", onDeviceReady, false);
+			var camera, scene, renderer;
 
-    // PhoneGap is ready
-    //
-    function onDeviceReady() {
-		var element = document.getElementById('accelerometer');
-        element.innerHTML = '' ;
-        var canvas = document.getElementById('myCanvas');
-		canvas.width = window.innerWidth ;
-		canvas.height = window.innerHeight ;
-        startWatch();
-    }
+			var geometry, group;
 
-    // Start watching the acceleration
-    //
-    function startWatch() {
-		var element = document.getElementById('accelerometer');
-        element.innerHTML = "" ;
-        // Update acceleration every 3 seconds
-        var options = { frequency: 10 };
+			var mouseX = 0, mouseY = 0;
 
-        watchID = navigator.accelerometer.watchAcceleration(onSuccess, onError, options);
-    }
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
 
-    // Stop watching the acceleration
-    //
-    function stopWatch() {
-        if (watchID) {
-            navigator.accelerometer.clearWatch(watchID);
-            watchID = null;
-        }
-    }
+			document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
-    // onSuccess: Get a snapshot of the current acceleration
-    //
-    function onSuccess(acceleration) {
-/*
-        var element = document.getElementById('accelerometer');
-        element.innerHTML = 'Acceleration X: ' + acceleration.x + '<br />' +
-                            'Acceleration Y: ' + acceleration.y + '<br />' +
-                            'Acceleration Z: ' + acceleration.z + '<br />' +
-                            'Timestamp: '      + acceleration.timestamp + '<br />';
-*/
-		drawAccelerationCircle( acceleration ) ;
-    }
+			init();
+			animate();
 
-    // onError: Failed to get the acceleration
-    //
-    function onError() {
-        alert('onError!');
-    }
+			function init() {
 
-	function drawAccelerationCircle( acceleration ) {
-      var canvas = document.getElementById('myCanvas');
-      var context = canvas.getContext('2d');
-	  context.clearRect(0,0,canvas.width,canvas.height);
-      var newCenterX = canvas.width / 2 - acceleration.x * canvas.width / 5 ; // canvas.width - Math.abs( acceleration.x * canvas.width / 10 ) ;//	  canvas.width / 2;
-      var newCenterY = canvas.height / 2 + acceleration.y * canvas.height / 5 ; // var centerY = canvas.height / 2;
-	  centerX = Math.max( Math.min( canvas.width , 0.9 * centerX + 0.1 * newCenterX ) , 0 ) ;
-	  centerY = Math.max( Math.min( 0.9 * centerY + 0.1 * newCenterY , canvas.height ) , 0 ) ;
-	  var radius = 70;
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
 
-      context.beginPath();
-      context.arc(centerX, centerY, Math.abs( radius ), 0, 2 * Math.PI, false);
-	  if( (acceleration.x * acceleration.y) > 0 ) {
-		context.fillStyle = 'green' ;
-	  } else {
-		context.fillStyle = 'red' ;
-	  }
-      context.fill();
-      context.lineWidth = 5;
-	  var strokeStyle = '#003300' ;
-      context.strokeStyle = strokeStyle ;
-      context.stroke();
-	}
-    </script>
-  </head>
-  <body>
-    <div id="accelerometer">loading accelerometer</div>
-	
-    <canvas id="myCanvas" width="300" height="300"></canvas>
-  </body>
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 500;
+
+				scene = new THREE.Scene();
+
+				var geometry = new THREE.CubeGeometry( 100, 100, 100 );
+				var material = new THREE.MeshNormalMaterial();
+
+				group = new THREE.Object3D();
+
+				for ( var i = 0; i < 200; i ++ ) {
+
+					var mesh = new THREE.Mesh( geometry, material );
+					mesh.position.x = Math.random() * 2000 - 1000;
+					mesh.position.y = Math.random() * 2000 - 1000;
+					mesh.position.z = Math.random() * 2000 - 1000;
+					mesh.rotation.x = Math.random() * 360 * ( Math.PI / 180 );
+					mesh.rotation.y = Math.random() * 360 * ( Math.PI / 180 );
+					mesh.matrixAutoUpdate = false;
+					mesh.updateMatrix();
+					group.add( mesh );
+
+				}
+
+				scene.add( group );
+
+				renderer = new THREE.CanvasRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.sortObjects = false;
+				container.appendChild( renderer.domElement );
+
+				/*
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				stats.domElement.style.zIndex = 100;
+				container.appendChild( stats.domElement );
+				*/
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function onDocumentMouseMove(event) {
+
+				mouseX = ( event.clientX - windowHalfX ) * 10;
+				mouseY = ( event.clientY - windowHalfY ) * 10;
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+				// stats.update();
+
+			}
+
+			function render() {
+
+				camera.position.x += ( mouseX - camera.position.x ) * .05;
+				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+				camera.lookAt( scene.position );
+
+				group.rotation.x = Math.sin( Date.now() * 0.0007 ) * 0.5;
+				group.rotation.y = Math.sin( Date.now() * 0.0003 ) * 0.5;
+				group.rotation.z = Math.sin( Date.now() * 0.0002 ) * 0.5;
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
 </html>
