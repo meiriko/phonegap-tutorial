@@ -13,7 +13,7 @@ var EmployeeView = function( employee ) {
 				$('.location', this.el).html( ' location addedddd ' ) ;
 			},
 			function( error ) {
-				alert('Error getting location: ' + error);
+				alert('Error getting location: ' + error.code + " ; " + error.message );
 			});
 		return false;
 	};
