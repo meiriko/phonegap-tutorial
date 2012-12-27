@@ -14,7 +14,8 @@ var EmployeeView = function( employee ) {
 		console.log('addLocation');
 		navigator.geolocation.getCurrentPosition(
 			function(position) {
-				$('.location', this.el).html(position.coords.latitude + ',' + position.coords.longitude);
+				// $('.location', this.el).html(position.coords.latitude + ',' + position.coords.longitude);
+				$('.location', this.el).html( ' location addedddd ' ) ;
 			},
 			function() {
 				alert('Error getting location');
