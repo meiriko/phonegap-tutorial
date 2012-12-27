@@ -9,8 +9,8 @@ var EmployeeView = function( employee ) {
 		console.log('addLocation');
 		navigator.geolocation.getCurrentPosition(
 			function(position) {
-				// $('.location', this.el).html(position.coords.latitude + ',' + position.coords.longitude);
-				$('.location', this.el).html( ' location addedddd ' ) ;
+				$('.location', this.el).html(position.coords.latitude + ',' + position.coords.longitude);
+				// $('.location', this.el).html( ' location addedddd ' ) ;
 			},
 			function( error ) {
 				alert('Error getting location: ' + error.code + " ; " + error.message );
